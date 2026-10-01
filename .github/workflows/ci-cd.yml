@@ -1,75 +1,94 @@
-name: ci-cd
+name: CI-CD
+
 on:
   push:
     branches:
       - jibrankhan
+
   pull_request:
     branches:
       - jibrankhan
+
 jobs:
   frontend:
-    name: frontend
+    name: Frontend CI
     runs-on: ubuntu-latest
 
     steps:
-      - name: Code Checkout
+      - name: Checkout Code
         uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - name: Install Dependencies
-        run: |
-          cd ./frontend
-          npm install
+        working-directory: frontend
+        run: npm install
+
       - name: Start Backend Services
-        run: |
-          docker compose up -d
-          sleep 15
+        run: docker compose up -d mongodb redis backend
+
+      - name: Wait for Backend
+        run: sleep 15
+
+      - name: Seed Test Data
+        run: docker compose exec -T backend node seed-test-data.js
+
       - name: Run Linter
-        run: |
-          cd ./frontend
-          npm run lint
+        working-directory: frontend
+        run: npm run lint
+
       - name: Run Unit Tests
-        run: |
-          cd ./frontend
-          npm test
+        working-directory: frontend
+        run: npm test -- --watchAll=false __tests__/App.test.tsx
+
+      - name: Run Integration Tests
+        working-directory: frontend
+        run: npm test -- --watchAll=false __tests__/integration/home.test.tsx
+
       - name: Build Docker Image
-        run: |
-          docker build -t frontend ./frontend
+        run: docker build -t wanderlust-frontend ./frontend
+
 
   backend:
-      name: backend
-      runs-on: ubuntu-latest
+    name: Backend CI
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Code Checkout
-          uses: actions/checkout@v4
-        - name: Setup Node.js
-          uses: actions/setup-node@v4
-          with:
-            node-version: 22
-        - name: Install Dependencies
-          run: |
-            cd ./backend
-            npm install
-        - name: Run Code Check
-          run: |
-            cd ./backend
-            npm run check
-        - name: Run Unit Tests
-          run: |
-            cd ./backend
-            npm test
-        - name: Build Docker Image
-          run: |
-            docker build -t backend ./backend
-            
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        working-directory: backend
+        run: npm install
+
+      - name: Run Code Check
+        working-directory: backend
+        run: npm run check
+
+      - name: Run Unit Tests
+        working-directory: backend
+        run: npx jest tests/unit --runInBand --watchAll=false
+
+      - name: Build Docker Image
+        run: docker build -t wanderlust-backend ./backend
+
+
   deploy:
-      name: Deployment Job
-      runs-on: ubuntu-latest
-      needs: [frontend,backend]
+    name: Deployment Status
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Deployment Status
-          run: echo "Deployment Completed Successfully"
+    needs:
+      - frontend
+      - backend
+
+    steps:
+      - name: Deployment Status
+        run: echo "Deployment Completed Successfully"
