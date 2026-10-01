@@ -1,0 +1,66 @@
+name: ci-cd
+on:
+  push:
+    branches:
+      - jibrankhan
+  pull_request:
+    branches:
+      - jibrankhan
+jobs:
+  frontend:
+    name: frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Dependencies
+        run: |
+          cd ./frontend
+          npm install
+      - name: Run Linter
+        run: |
+          cd ./frontend
+          npm run lint
+      - name: Run Unit Tests
+        run: |
+          cd ./frontend
+          npm test
+      - name: Build Docker Image
+        run: |
+          docker build -t frontend ./frontend
+    backend:
+      name: backend
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Code Checkout
+          uses: actions/checkout@v4
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: 22
+        - name: Install Dependencies
+          run: |
+            cd ./backend
+            npm install
+        - name: Run Linter
+          run: |
+            cd ./backend
+            npm run lint
+        - name: Run Unit Tests
+          run: |
+            cd ./backend
+            npm test
+        - name: Build Docker Image
+          run: |
+            docker build -t backend ./backend
+
+    deploy:
+      name: Deployment Job
+      runs-on: ubuntu-latest
+      needs: [frontend,backend]
