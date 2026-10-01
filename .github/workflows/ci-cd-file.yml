@@ -25,11 +25,11 @@ jobs:
       - name: Start Backend Services
         run: |
           docker compose up -d
-#          sleep 15
-#      - name: Run Linter
-#        run: |
-#          cd ./frontend
-#          npm run lint
+          sleep 15
+      - name: Run Linter
+        run: |
+          cd ./frontend
+          npm run lint
 #      - name: Run Unit Tests
 #        run: |
 #          cd ./frontend
