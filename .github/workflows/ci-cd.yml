@@ -24,8 +24,8 @@ jobs:
           npm install
       - name: Start Backend Services
         run: |
-          docker compose up -d mongodb redis backend || true
-          docker compose logs mongodb
+          docker compose up -d mongodb redis backend
+          sleep 15
       - name: Run Linter
         run: |
           cd ./frontend
