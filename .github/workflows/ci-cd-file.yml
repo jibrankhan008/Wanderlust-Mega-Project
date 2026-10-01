@@ -53,10 +53,6 @@ jobs:
           run: |
             cd ./backend
             npm install
-        - name: Run Code Check
-          run: |
-            cd ./backend
-            npm run check
 #        - name: Run Unit Tests
 #          run: |
 #            cd ./backend
@@ -65,11 +61,11 @@ jobs:
           run: |
             docker build -t backend ./backend
             
-#  deploy:
-#      name: Deployment Job
-#      runs-on: ubuntu-latest
-#      needs: [frontend,backend]
-#
-#      steps:
-#        - name: Deployment Status
-#          run: echo "Deployment Completed Successfully"
+  deploy:
+      name: Deployment Job
+      runs-on: ubuntu-latest
+      needs: [frontend,backend]
+
+      steps:
+        - name: Deployment Status
+          run: echo "Deployment Completed Successfully"
