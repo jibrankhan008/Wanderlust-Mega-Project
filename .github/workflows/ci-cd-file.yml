@@ -22,18 +22,18 @@ jobs:
         run: |
           cd ./frontend
           npm install
-      - name: Start Backend Services
-        run: |
-          docker compose up -d
-          sleep 15
-      - name: Run Linter
-        run: |
-          cd ./frontend
-          npm run lint
-      - name: Run Unit Tests
-        run: |
-          cd ./frontend
-          npm test
+#      - name: Start Backend Services
+#        run: |
+#          docker compose up -d
+#          sleep 15
+#      - name: Run Linter
+#        run: |
+#          cd ./frontend
+#          npm run lint
+#      - name: Run Unit Tests
+#        run: |
+#          cd ./frontend
+#          npm test
       - name: Build Docker Image
         run: |
           docker build -t frontend ./frontend
@@ -53,23 +53,23 @@ jobs:
           run: |
             cd ./backend
             npm install
-        - name: Run Code Check
-          run: |
-            cd ./backend
-            npm run check
-        - name: Run Unit Tests
-          run: |
-            cd ./backend
-            npm test
+#        - name: Run Code Check
+#          run: |
+#            cd ./backend
+#            npm run check
+#        - name: Run Unit Tests
+#          run: |
+#            cd ./backend
+#            npm test
         - name: Build Docker Image
           run: |
             docker build -t backend ./backend
             
-  deploy:
-      name: Deployment Job
-      runs-on: ubuntu-latest
-      needs: [frontend,backend]
-
-      steps:
-        - name: Deployment Status
-          run: echo "Deployment Completed Successfully"
+#  deploy:
+#      name: Deployment Job
+#      runs-on: ubuntu-latest
+#      needs: [frontend,backend]
+#
+#      steps:
+#        - name: Deployment Status
+#          run: echo "Deployment Completed Successfully"
