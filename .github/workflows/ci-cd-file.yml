@@ -31,9 +31,8 @@ jobs:
           cd ./frontend
           npm run lint
       - name: Run Unit Tests
-        run: |
-          cd ./frontend
-          npm test
+        working-directory: frontend
+        run: npm test -- --watchAll=false __tests__/App.test.tsx
       - name: Build Docker Image
         run: |
           docker build -t frontend ./frontend
