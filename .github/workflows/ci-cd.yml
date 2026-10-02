@@ -29,26 +29,11 @@ jobs:
 
       - name: Start Backend Services
         run: |
-          docker compose up -d mongodb redis
+          docker compose up -d mongodb redis backend
           sleep 15
 
-      - name: Install Backend Dependencies
-        working-directory: backend
-        run: npm install
-
-      - name: Start Backend
-        working-directory: backend
-        env:
-          MONGODB_URI: mongodb://localhost:27017/wanderlust
-          REDIS_URL: redis://localhost:6379
-          PORT: 8080
-        run: npm start &
-
       - name: Seed Test Data
-        working-directory: backend
-        env:
-          MONGODB_URI: mongodb://localhost:27017/wanderlust
-        run: node seed-test-data.js
+        run: docker compose exec -T backend node seed-test-data.js
 
       - name: Run Linter
         working-directory: frontend
