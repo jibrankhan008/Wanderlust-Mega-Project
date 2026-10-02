@@ -1,19 +1,17 @@
 services:
-  mongodb:
-    container_name: mongo-service
-    image: mongo
-    volumes:
-      - ./backend/data:/data/db
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    env_file:
+      - ./frontend/.env.docker
     ports:
-      - "27017:27017"
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - "8081:80"
+    depends_on:
+      backend:
+        condition: service_started
 
   backend:
-    container_name: backend-wanderlust
+    container_name: backend
     build: ./backend
     env_file:
       - ./backend/.env.docker
@@ -25,25 +23,27 @@ services:
       redis:
         condition: service_healthy
 
-  frontend:
-    container_name: frontend-wanderlust
-    build: ./frontend
-    env_file:
-      - ./frontend/.env.docker
+  mongodb:
+    container_name: mongo-service
+    image: mongo
     ports:
-      - "5173:5173"
-    depends_on:
-      backend:
-        condition: service_started
+      - "27017:27017"
+    volumes:
+      - ./backend/data:/data/db
+    healthcheck:
+      test: ["CMD","mongosh","--eval","db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     container_name: redis-service
-    restart: unless-stopped
     image: redis:7.0.5-alpine
+    restart: unless-stopped
     expose:
       - "6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD","redis-cli","ping"]
       interval: 10s
       timeout: 5s
-      retries: 5  
+      retries: 5

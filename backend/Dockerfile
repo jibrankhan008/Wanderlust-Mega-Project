@@ -1,22 +1,20 @@
+####################Stage1#########################
 FROM node:21 AS builder
 
 WORKDIR /app
 
+COPY package*.json ./
+
+RUN npm install --omit=dev
+
 COPY . .
 
-RUN npm i
-
-#RUN npm run test
-
-############### Multi Stage #################
-
+###################Stage2#########################
 FROM node:21-slim
 
 WORKDIR /app
 
 COPY --from=builder /app .
-
-COPY .env.docker .env
 
 EXPOSE 8080
 

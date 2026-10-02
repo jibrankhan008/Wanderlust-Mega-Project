@@ -16,7 +16,7 @@ afterEach(() => mockedUseNavigate.mockRestore());
  * To pass/clear test, backend must be running locally.
  */
 describe('Integration Test: Home Route', () => {
-  test('Home Route: Renders home page', async () => {
+/*  test('Home Route: Renders home page', async () => {
     //ARRANGE
     render(
       <BrowserRouter>
@@ -33,11 +33,34 @@ describe('Integration Test: Home Route', () => {
         name: /Create post/i,
       })
     ).toBeInTheDocument();
-    expect(screen.getByText(/Featured Posts/)).toBeInTheDocument();
+//    expect(screen.getByText(/Featured Posts/)).toBeInTheDocument();
+    expect(await screen.findByText(/All Posts/)).toBeInTheDocument();
     expect(screen.getAllByTestId('featurepostcardskeleton')).toHaveLength(5);
     expect(screen.getAllByTestId('latestpostcardskeleton')).toHaveLength(5);
     expect(screen.getByText(/All Posts/)).toBeInTheDocument();
     expect(screen.getAllByTestId('postcardskeleton')).toHaveLength(8);
+  });
+*/
+    test('Home Route: Renders home page', async () => {
+    //ARRANGE
+    render(
+      <BrowserRouter>
+        <HomePage />
+      </BrowserRouter>
+    );
+
+    //ASSERT
+    expect(screen.getByText(/WanderLust/)).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: /Create post/i,
+      })
+    ).toBeInTheDocument();
+
+    expect(await screen.findByText(/Featured Posts/)).toBeInTheDocument();
+    expect(await screen.findByText(/Latest Posts/)).toBeInTheDocument();
+    expect(await screen.findAllByTestId('featuredPostCard')).toHaveLength(5);
+    expect(await screen.findAllByTestId('postcard')).toHaveLength(10);
   });
   test('Home Route: Verify navigation on create post button click', async () => {
     //ARRANGE

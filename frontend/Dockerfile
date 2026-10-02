@@ -1,3 +1,4 @@
+###################Stage1##########################
 FROM node:21 AS builder
 
 WORKDIR /app
@@ -8,18 +9,12 @@ RUN npm install
 
 COPY . .
 
+RUN npm run build
 
-########### Multi Stage ############################
+####################Stage2########################
 
-FROM node:21-slim
+FROM nginx:latest
 
-WORKDIR /app
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-COPY --from=builder /app .
-
-COPY .env.docker .env.local
-
-EXPOSE 5173
-
-CMD ["npm","run","dev","--","--host","0.0.0.0"]
-
+EXPOSE 80
